@@ -4,7 +4,10 @@
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
-    "hono": "^4.9.10"
+    "@pinecone-database/pinecone": "^6.1.2",
+    "hono": "^4.9.10",
+    "openai": "^6.2.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/bun": "latest"
