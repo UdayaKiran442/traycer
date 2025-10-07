@@ -13,7 +13,8 @@
   "activationEvents": [
     "onCommand:traycer-ext.helloWorld",
     "onCommand:traycer-ext.showInput",
-    "onCommand:traycer-ext.processFolders"
+    "onCommand:traycer-ext.processFolders",
+    "onCommand:traycer-ext.folderStrcuture"
   ],
   "contributes": {
     "commands": [
@@ -28,6 +29,10 @@
       {
         "command": "traycer-ext.processFolders",
         "title": "Process workspace folders"
+      },
+      {
+        "command": "traycer-ext.folderStructure",
+        "title": "Save workspace folder structure"
       }
     ]
   },

@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.activate = activate;
 exports.deactivate = deactivate;
 const vscode = __importStar(require("vscode"));
+const path = __importStar(require("path"));
 const DocumentProcessor_1 = require("./DocumentProcessor");
 let documentProcessor;
 function activate(context) {
@@ -93,8 +94,35 @@ function activate(context) {
             // For example, process the input or open a webview with the result
         }
     });
+    // workspace folder structure command
+    const folderStructure = vscode.commands.registerCommand('traycer-ext.folderStructure', async () => {
+        const files = await documentProcessor.processWorkspace();
+        const tree = {};
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        if (!workspaceFolders) {
+            vscode.window.showErrorMessage("Workspace not present");
+            return;
+        }
+        const workspaceFolder = workspaceFolders[0];
+        if (files && files.length > 0) {
+            for (const file of files) {
+                const relativePath = path.relative(workspaceFolder.uri.fsPath, file.uri.fsPath);
+                const parts = relativePath.split(path.sep);
+                let current = tree;
+                parts.forEach((part, index) => {
+                    if (!current[part]) {
+                        current[part] = index === parts.length - 1 ? null : {};
+                    }
+                    if (current[part] !== null) {
+                        current = current[part];
+                    }
+                });
+            }
+            return tree;
+        }
+    });
     // Register both commands
-    context.subscriptions.push(helloWorld, showInputBox, processDocument);
+    context.subscriptions.push(helloWorld, showInputBox, processDocument, folderStructure);
 }
 function deactivate() { }
 //# sourceMappingURL=extension.js.map
