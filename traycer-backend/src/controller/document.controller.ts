@@ -16,7 +16,7 @@ export async function embedDocument(payload: IEmbedDocumentSchema) {
             vector: embeddings,
             metadata: {
                 content: payload.content,
-                uri: payload.uri,
+                path: payload.uri.path,
             }
         })
     } catch (error) {

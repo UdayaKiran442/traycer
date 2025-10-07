@@ -3,20 +3,14 @@ import { z } from "zod";
 import { EmbedDocumentError } from "../exceptions/document.exception";
 import { GenerateEmbeddingsServiceError } from "../exceptions/openai.exceptions";
 import { UpsertVectorEmbeddingsServiceError } from "../exceptions/pinecone.exceptions";
+import { embedDocument } from "../controller/document.controller";
 
 const documentRoute = new Hono();
 
 const EmbedDocumentSchema = z.object({
     content: z.string().min(1, "Content is required"),
     uri: z.object({
-        _formatted: z.string(),
-        _fsPath: z.string(),
-        authority: z.string(),
-        fragment: z.string(),
-        fsPath: z.string(),
         path: z.string(),
-        query: z.string(),
-        scheme: z.string(),
     })
 })
 
@@ -28,6 +22,9 @@ documentRoute.post('/embed', async (c) => {
         if (!validation.success) {
             throw validation.error;
         }
+        await embedDocument(validation.data);
+        // Call your service to embed the document here
+        return c.json({ success: true, message: "Document embedded successfully" }, 200);
 
     } catch (error) {
         if(error instanceof z.ZodError){
@@ -37,6 +34,7 @@ documentRoute.post('/embed', async (c) => {
         if (error instanceof GenerateEmbeddingsServiceError || error instanceof UpsertVectorEmbeddingsServiceError || error instanceof EmbedDocumentError) {
             return c.json({ success: false, error: error.message }, 500);
         }
+        return c.json({ success: false, error: 'Internal Server Error' }, 500);
     }
 })
 

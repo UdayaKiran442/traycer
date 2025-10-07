@@ -11,7 +11,6 @@ export class DocumentProcessor {
                 return;
             }
             const files = await this.getWorkspaceFiles(workspaceFolders);
-            console.log("🚀 ~ DocumentProcessor ~ processWorkspace ~ files:", files);
             return files;
         } catch (error) {
             vscode.window.showErrorMessage("Error processing workspace");

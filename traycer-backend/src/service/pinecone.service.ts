@@ -19,6 +19,7 @@ export async function upsertVectorEmbeddingsService(payload: { indexName: string
             }
         ])
     } catch (error) {
+        console.log("🚀 ~ upsertVectorEmbeddingsService ~ error:", error)
         throw new UpsertVectorEmbeddingsServiceError('Failed to upsert vector embeddings', { cause: (error as Error).message });
     }
 }

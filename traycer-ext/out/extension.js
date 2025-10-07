@@ -48,7 +48,33 @@ function activate(context) {
     // document process command
     const processDocument = vscode.commands.registerCommand('traycer-ext.processFolders', async () => {
         const result = await documentProcessor.processWorkspace();
-        console.log(result);
+        if (result && result.length > 0) {
+            let index = 0;
+            for (const file of result) {
+                const payload = {
+                    content: file.content,
+                    uri: {
+                        path: file.uri.path
+                    }
+                };
+                // Send to backend
+                const response = await fetch('http://localhost:3000/documents/embed', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const jsonResponse = await response.json();
+                index++;
+                if (jsonResponse.success) {
+                    vscode.window.showInformationMessage(`Backend Response: ${jsonResponse.message} for index ${index}`);
+                }
+                else {
+                    vscode.window.showErrorMessage(`Backend Error: ${jsonResponse.error?.toString()} for index ${index}`);
+                }
+            }
+        }
     });
     // Input Box command
     const showInputBox = vscode.commands.registerCommand('traycer-ext.showInput', async () => {
