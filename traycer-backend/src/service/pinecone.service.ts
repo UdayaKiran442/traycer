@@ -1,7 +1,7 @@
 import { Pinecone } from '@pinecone-database/pinecone'
 
 
-import { UpsertVectorEmbeddingsServiceError } from "../exceptions/pinecone.exceptions";
+import { QueryVectorEmbeddingsServiceError, UpsertVectorEmbeddingsServiceError } from "../exceptions/pinecone.exceptions";
 
 
 const pinecone = new Pinecone({
@@ -21,5 +21,19 @@ export async function upsertVectorEmbeddingsService(payload: { indexName: string
     } catch (error) {
         console.log("🚀 ~ upsertVectorEmbeddingsService ~ error:", error)
         throw new UpsertVectorEmbeddingsServiceError('Failed to upsert vector embeddings', { cause: (error as Error).message });
+    }
+}
+
+export async function queryVectorEmbeddingsService(payload: { indexName: string, vector: number[] }) {
+    try {
+        const index = pinecone.index(payload.indexName)
+        // fetch similar records for match score above 0.2
+        return await index.query({
+            vector: payload.vector,
+            includeMetadata: true,
+            topK: 10,
+        })
+    } catch (error) {
+        throw new QueryVectorEmbeddingsServiceError('Failed to query vector embeddings', { cause: (error as Error).message });
     }
 }

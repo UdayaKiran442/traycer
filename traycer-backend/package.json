@@ -4,7 +4,9 @@
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
     "@pinecone-database/pinecone": "^6.1.2",
+    "drizzle-orm": "^0.44.6",
     "hono": "^4.9.10",
     "openai": "^6.2.0",
     "zod": "^4.1.12"
