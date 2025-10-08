@@ -55,3 +55,6 @@ Client → Workspace Analyzer Command → Plan Generator Command (LLM) → Persi
 3. Response will be generated from backend and displayed in the UI.
 4. Plan stored in DB and displayed to user.
 
+# Low Level System Design
+
+
