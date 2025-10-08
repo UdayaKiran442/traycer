@@ -1,8 +1,10 @@
 import { Hono } from "hono";
 import z from "zod";
+
 import { createPlan } from "../controller/plan.controller";
 import { GenerateEmbeddingsServiceError, GeneratePlanServiceError } from "../exceptions/openai.exceptions";
 import { QueryVectorEmbeddingsServiceError } from "../exceptions/pinecone.exceptions";
+import { CreatePlanInDBError } from "../exceptions/plan.exceptions";
 
 const planRoute = new Hono();
 
@@ -28,7 +30,7 @@ planRoute.post('/create', async (c) => {
             return c.json({ success: false, error: errMessage[0], message: errMessage[0].message }, 400);
         }
 
-        if (error instanceof GeneratePlanServiceError || error instanceof GenerateEmbeddingsServiceError || error instanceof QueryVectorEmbeddingsServiceError) {
+        if (error instanceof GeneratePlanServiceError || error instanceof GenerateEmbeddingsServiceError || error instanceof QueryVectorEmbeddingsServiceError || error instanceof CreatePlanInDBError) {
             return c.json({ success: false, error: error.name, message: error.message, cause: error.cause }, 500);
         }
 
