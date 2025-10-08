@@ -34,5 +34,24 @@
 - ORM/Query Builder: Drizzle ORM - type-safe schema definitions, migrations and SQL query building.
 
 ## Extension
-- Programming Language: TypeScript
-- Extension Framework: Visual Studio Code (VS Code) Extension API
+- Programming Language: TypeScript.
+- Extension Framework: Visual Studio Code (VS Code) Extension API.
+
+# High Level System Design
+
+## 1. Objective
+
+To build an AI-powered plan generator feature that scans a given project (e.g., Hono-based app), and generates a structured “Plan” for the user query consisting of:
+- Observations – key findings from code analysis.
+- Approach – recommended solution or architecture pattern.
+- Files – changes needed in specific files.
+
+## 2. Data Flow
+
+Client → Workspace Analyzer Command → Plan Generator Command (LLM) → Persistence → Client UI
+
+1. Users input query, basically a asks for a plan to develop the feature.
+2. Query will be sent to backend along with current folder structure of the project.
+3. Response will be generated from backend and displayed in the UI.
+4. Plan stored in DB and displayed to user.
+
