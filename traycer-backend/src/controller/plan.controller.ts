@@ -16,7 +16,7 @@ export async function createPlan(payload: ICreatePlanSchema){
             vector: embeddings
         })
         const context = results.matches.filter(match => match.score && match.score > 0.2).map(match => match.metadata);
-        console.log("🚀 ~ createPlan ~ queryVectorEmbeddingsService: completed", context);
+        console.log("🚀 ~ createPlan ~ queryVectorEmbeddingsService: completed", JSON.stringify(context));
         // pass the context to openai along with the query to get the response
         const response = await generatePlanService({
             query: payload.query,
