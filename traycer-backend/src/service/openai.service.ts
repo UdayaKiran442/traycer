@@ -41,6 +41,20 @@ export async function generatePlanService(payload: {query: string, context: stri
 						Query: ${payload.query}
 						Current Folder Structure: ${payload.tree}
 						Context: ${payload.context}
+
+						Return the response in JSON
+						{
+							"observations": string[],
+							"approach": {
+								"approach": string,
+								"reasons": string[]
+							},
+							"files": {
+								"filePath": string,
+								"description": string,
+								"type": "added" | "modified"
+							}[]
+						}
 					`
 				}
 			]
