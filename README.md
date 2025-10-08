@@ -1,6 +1,6 @@
 # Traycer mini version - System Design
 
-**Author** - Udaya Kiran Gonuguntla
+**Author** - Udaya Kiran Gonuguntla \
 **Date** - 8 Oct 2025
 
 - This document describes production ready design for quiz application.
