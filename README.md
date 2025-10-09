@@ -52,7 +52,7 @@ Client → Workspace Analyzer Command → Plan Generator Command (LLM) → Persi
 
 1. Users input query, basically a asks for a plan to develop the feature.
 2. Query will be sent to backend along with current folder structure of the project.
-3. Response will be generated from backend and displayed in the UI.
+3. Response will be generated from backend and displayed in the UI.  
 4. Plan stored in DB and displayed to user.
 
 # Low Level System Design
@@ -67,6 +67,13 @@ API End Point: /document/embed
 Method: POST
 
 Description: This end point is used to store the entire codebase in embeddings form in vector db.
+
+Flow:
+- VS code extension API is used to fetch all the files along with their content and file path.
+- File content and path are stored in object and will be passed to backend api.
+- Then the content will be converted to embeddings and then will be stored in vector db along with metadata.
+- Metadata contains content in the file and the filepath.
+- Hence with help of this API entire code base is stored as vector embeddings in vector db and will be later fetched by plan route for providing context to LLM.
 
 Payload:
 ```ts
@@ -97,7 +104,7 @@ Description: This end point is used to generate plan for user query. For example
 Flow:
 - User query will be converted to embeddings.
 - Then the embeddings will be used to get relavant context about codebase from vector db.
-- Context along with user query and current project filder structure will be passed to LLM for generating detailed plan.
+- Context along with user query and current project folder structure will be passed to LLM for generating detailed plan.
 
 
 
@@ -116,9 +123,67 @@ Response:
   message: string,
   data: {
     observations: string[],
-    approach: {},
-    files: {}[]
+    approach: {}, // approach taken and reasoning for the approach.
+    files: {}[] // contains filePath, description, whether the file is added newly or modified
   }
+}
+```
+
+Sample Payload:
+```sh
+{
+    "query": "How add JWT authentication and middleware for routes to allow only authenticated users to access the resource",
+    "tree": "{'src':{'index.ts':null},'package.json':null}"
+}
+```
+
+Sample Response:
+```sh
+{
+    "success": true,
+    "message": "Plan created successfully",
+    "data": {
+        "observations": [
+            "The project uses Hono, a minimal web framework for TypeScript.",
+            "Currently, there is only one route defined, which serves a text response.",
+            "There is no clear structure for handling authentication or user access control.",
+            "The folder structure is minimal, indicating it may still be in early development."
+        ],
+        "approach": {
+            "approach": "Implement JWT authentication and a middleware for authentication checks on routes.",
+            "reasons": [
+                "JWT is a stateless authentication mechanism, making it suitable for RESTful APIs.",
+                "Middleware allows for centralized control over route access, enhancing maintainability.",
+                "This approach paves the way for scalability, as new routes can easily incorporate the authentication middleware."
+            ]
+        },
+        "files": [
+            {
+                "filePath": "src/middleware/auth.ts",
+                "action": "add",
+                "description": "Create a middleware function that validates JWT tokens on incoming requests, rejecting unauthorized users.",
+                "type": "added"
+            },
+            {
+                "filePath": "src/routes/auth.ts",
+                "action": "add",
+                "description": "Create a new route module dedicated to authentication endpoints (e.g., login, registration). This keeps auth-related routes organized and scalable.",
+                "type": "added"
+            },
+            {
+                "filePath": "src/index.ts",
+                "action": "modify",
+                "description": "Modify the main application file to integrate the new middleware and route module. This will enable protected routes within the app.",
+                "type": "modified"
+            },
+            {
+                "filePath": "package.json",
+                "action": "modify",
+                "description": "Add dependencies for JSON Web Token (jwt-simple or jsonwebtoken) to handle JWT creation and verification.",
+                "type": "modified"
+            }
+        ]
+    }
 }
 ```
 
