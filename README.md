@@ -57,4 +57,68 @@ Client → Workspace Analyzer Command → Plan Generator Command (LLM) → Persi
 
 # Low Level System Design
 
+## API Design
+**Base URL**: http://localhost:3000/
+
+### Embed document
+
+API End Point: /document/embed
+
+Method: POST
+
+Description: This end point is used to store the entire codebase in embeddings form in vector db.
+
+Payload:
+```ts
+{
+  content: string,
+  uri: {
+    path: string
+  }
+}
+```
+
+Response:
+```ts
+{
+  success: boolean,
+  message: string
+}
+```
+
+### Create Plan
+
+API End Point: /plan/create
+
+Method: POST
+
+Description: This end point is used to generate plan for user query. For example if user queried to add routes in the project api gives a detailed plan about the approach.
+
+Flow:
+- User query will be converted to embeddings.
+- Then the embeddings will be used to get relavant context about codebase from vector db.
+- Context along with user query and current project filder structure will be passed to LLM for generating detailed plan.
+
+
+
+Payload:
+```ts
+{
+  query: string,
+  tree: string
+}
+```
+
+Response:
+```ts
+{
+  success: boolean,
+  message: string,
+  data: {
+    observations: string[],
+    approach: {},
+    files: {}[]
+  }
+}
+```
 
